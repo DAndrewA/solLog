@@ -15,23 +15,28 @@ app.get("/",function(req,res){
 // sends request to db every time someone connects
 io.on("connection",function(socket){
     console.log("User connected");
-    socket.on("logPush",function(user,entryName,log){
-        pushLog(user,entryName,log);
-    });
+    // pushes a log on a logPush event
+    socket.on("logPush",function(data){
+        // data is a json object
+        pushLog(data.name,data.logEntry,data.log);
+    })
 })
 
 // listens over port 3000
-http.listen(3000,function(){
-    console.log("Server listning");
-})
+http.listen(3000);
 
 // the function to write the log entry
 var pushLog = function(userName,entryName,log){
-    db.put("users",userName+".entries."+entryName,{
-        "title":entryName,
-        "author":name,
-        "log":log,
-    }).then(function(res){
+    // merges the log into the users object
+    db.merge("users",userName,{
+        "logs":{
+            entryName:{
+                "title":entryName,
+                "log":log,
+            },
+        },
+    })
+    .then(function(res){
         console.log("Succesfully wrote " + userName + "\'s entry : " + entryName);
     });
 }

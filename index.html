@@ -7,12 +7,16 @@
         <script>
             var socket = io();
             var sendLog = function(){
+                // gets data for sending
                 var name = $("#name").val();
                 var logEntry = $("#logEntry").val();
                 var log = $("#log").val();
-                socket.emit("logPush",name,logEntry,log);
+                // emits the data to the server as a logPush
+                socket.emit("logPush",{"name":name,"logEntry":logEntry,"log":log});
+                // sets the input areas to empty
                 $("#logEntry").val("");
                 $("#log").val("");
+                return false;
             }
         </script>
         <link rel="stylesheet" type="text/css" href="style.css">
