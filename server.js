@@ -28,15 +28,12 @@ http.listen(3000);
 // the function to write the log entry
 var pushLog = function(userName,entryName,log){
     // merges the log into the users object
-    db.merge("users",userName,{
-        "logs":{
-            entryName:{
-                "title":entryName,
-                "log":log,
-            },
-        },
+    db.post("logs",{
+            "title":entryName,
+            "author":userName,
+            "log":log,
     })
     .then(function(res){
         console.log("Succesfully wrote " + userName + "\'s entry : " + entryName);
-    });
+    })
 }
