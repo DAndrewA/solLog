@@ -15,10 +15,17 @@ app.get("/",function(req,res){
 // sends request to db every time someone connects
 io.on("connection",function(socket){
     console.log("User connected");
+
     // pushes a log on a logPush event
     socket.on("logPush",function(data){
         // data is a json object
         pushLog(data.name,data.logEntry,data.log);
+    })
+
+    // handles the login process
+    socket.on("login",function(data){
+        valid = login(data.name,data.password);
+        socket.emit("login "+data.name+" "+data.password,valid);
     })
 })
 
@@ -35,5 +42,26 @@ var pushLog = function(userName,entryName,log){
     })
     .then(function(res){
         console.log("Succesfully wrote " + userName + "\'s entry : " + entryName);
+    })
+}
+
+// the function that handles accesing the users password and validating it
+var login = function(name,password){
+    db.get("users",name)
+    // checks to see whether the password is valid
+    .then(function(res){
+        if(password === res.body.password){
+            console.log("login succesful");
+            return true
+        }
+        else{
+            console.log("password incorrect");
+            return "password"
+        }
+    })
+    // will only run if the name is invalid
+    .fail(function(err){
+        console.log("username incorrect");
+        return "username"
     })
 }

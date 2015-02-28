@@ -5,7 +5,10 @@
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script>
+            // opening the connection to the server
             var socket = io();
+
+            // The function to send the log
             var sendLog = function(){
                 // gets data for sending
                 var name = $("#name").val();
@@ -18,17 +21,57 @@
                 $("#log").val("");
                 return false;
             }
+
+            // The login function
+            var login = function(){
+                var name = $("#name").val();
+                var password = $("#password").val();
+                // emits the login event to the server
+                socket.emit("login",{"name":name,"password":password});
+                // looks out for a unique event name by user name and password
+                socket.on("login "+name+" "+password,function(data){
+                    valid = data
+                    // Makes sections visible if login is valid
+                    if(valid == true){
+                        $("#login").css("visibility","hidden");
+                        $("#writeLog").css("visibility","visible");
+                        $("#searchLog").css("visibility","visible");
+                    }
+                    else{
+                        alert("The " + valid + " was invalid.");
+                        $("#password").val("");
+                    }
+                })
+            }
         </script>
-        <link rel="stylesheet" type="text/css" href="style.css">
+        <style>
+            h1{
+                color: #AF3800;
+            }
+            #writeLog{
+                visibility: hidden;
+            }
+            #searchLog{
+                visibility: hidden;
+            }
+        </style>
     </head>
     <body>
         <h1>solLog</h1>
-        <p>This is the app to store log entries on a day by day basis.</p>
-        <br>
-        <input id="name" placeholder="Name"/>
-        <input id="logEntry" placeholder="Title" />
-        <textarea id="log" placeholder="log entry"></textarea>
-        <br>
-        <button onClick="sendLog()">Send</button>
+        <p>This is the app to store 'diary' entries on a sol by sol basis.</p>
+        <div id="login">
+            <input id="name" placeholder="username" />
+            <br><input id="password" placeholder="password" type="password" />
+            <br><button onClick="login()">Log in</button>
+        </div>
+        <div id="writeLog">
+            <input id="logEntry" placeholder="Title" />
+            <br><textarea id="log" placeholder="log entry"></textarea>
+            <br><button onClick="sendLog()">Send</button>
+        </div>
+        <div id="searchLog">
+            <input id="searchField" placeholder="Search" />
+            <button onClick="searchLog()">Search</button>
+        </div>
     </body>
 </html>
