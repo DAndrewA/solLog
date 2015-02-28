@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>solLog</title>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io();
+            var sendLog = function(){
+                var name = $("#name").val();
+                var logEntry = $("#logEntry").val();
+                var log = $("#log").val();
+                socket.emit("logPush",name,logEntry,log);
+                $("#logEntry").val("");
+                $("#log").val("");
+            }
+        </script>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+        <h1>solLog</h1>
+        <p>This is the app to store log entries on a day by day basis.</p>
+        <br>
+        <input id="name" placeholder="Name"/>
+        <input id="logEntry" placeholder="Title" />
+        <textarea id="log" placeholder="log entry"></textarea>
+        <br>
+        <button onClick="sendLog()">Send</button>
+    </body>
+</html>
