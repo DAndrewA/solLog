@@ -24,8 +24,8 @@ io.on("connection",function(socket){
 
     // handles the login process
     socket.on("login",function(data){
-        valid = login(data.name,data.password);
-        socket.emit("login "+data.name+" "+data.password,valid);
+        var validity = login(data.name,data.password);
+        socket.emit("login "+data.name+" "+data.password,validity);
     })
 })
 
@@ -47,21 +47,25 @@ var pushLog = function(userName,entryName,log){
 
 // the function that handles accesing the users password and validating it
 var login = function(name,password){
+    var validity = false;
+
     db.get("users",name)
     // checks to see whether the password is valid
     .then(function(res){
         if(password === res.body.password){
             console.log("login succesful");
-            return true
+            validity = true;
         }
         else{
             console.log("password incorrect");
-            return "password"
+            validity = "password"
         }
     })
     // will only run if the name is invalid
     .fail(function(err){
         console.log("username incorrect");
-        return "username"
+        validity = "username"
     })
+    console.log(validity);
+    return validity
 }

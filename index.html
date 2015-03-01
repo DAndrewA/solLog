@@ -30,15 +30,14 @@
                 socket.emit("login",{"name":name,"password":password});
                 // looks out for a unique event name by user name and password
                 socket.on("login "+name+" "+password,function(data){
-                    valid = data
                     // Makes sections visible if login is valid
-                    if(valid == true){
+                    if(data == true){
                         $("#login").css("visibility","hidden");
                         $("#writeLog").css("visibility","visible");
                         $("#searchLog").css("visibility","visible");
                     }
                     else{
-                        alert("The " + valid + " was invalid.");
+                        alert("The " + data + " was invalid.");
                         $("#password").val("");
                     }
                 })
