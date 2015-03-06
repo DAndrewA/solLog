@@ -31,8 +31,10 @@
                 // looks out for a unique event name by user name and password
                 socket.on("login "+name+" "+password,function(data){
                     // Makes sections visible if login is valid
+                    console.log("data ",data)
                     if(data == true){
                         $("#login").css("visibility","hidden");
+                        $("#login").css("height","0px");
                         $("#writeLog").css("visibility","visible");
                         $("#searchLog").css("visibility","visible");
                     }

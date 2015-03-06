@@ -24,9 +24,27 @@ io.on("connection",function(socket){
 
     // handles the login process
     socket.on("login",function(data){
-        var validity = login(data.name,data.password);
-        console.log("validity: ",validity);
-        socket.emit("login "+data.name+" "+data.password,validity);
+        // acceses the database to get the username and password
+        db.get('users', data.name)
+        .then(function(res){
+            if(res.body.password === data.password){
+                // returns true if the database finds the user and the password is correct
+                console.log("login succesful")
+                socket.emit("login"+data.name+" "+data.password,true);
+            }
+            else{
+                // if the user exists but the password is wrong, it returns password
+                console.log("password incorrect")
+                socket.emit("login"+data.name+" "+data.password,"password");
+            }
+        })
+        .fail(function(err){
+            // if the user doesn't exist, it will return username
+            console.log("name incorrect")
+            socket.emit("login"+data.name+" "+data.password,"username");
+        })
+        .done();
+
     })
 })
 
@@ -43,16 +61,5 @@ var pushLog = function(userName,entryName,log){
     })
     .then(function(res){
         console.log("Succesfully wrote " + userName + "\'s entry : " + entryName);
-    })
-}
-
-// the function that handles accesing the users password and validating it
-var login = function(name,password){
-    return db.get('users', name)
-    .then(function(res){
-        return {
-            name:name,
-            password:password,
-        }
     })
 }
